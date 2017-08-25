@@ -235,6 +235,25 @@ export class Select {
       this.behavior.first();
     }
 
+    /* Dropdown auto margin due to Viewport*/
+    setTimeout(function () {
+      var dropdownUl = this.element.nativeElement.querySelector('.ui-select-choices');
+      var ddInputWidth = this.element.nativeElement.querySelector('.ui-select-search').offsetWidth;
+      var ddWidth = dropdownUl.offsetWidth;
+      var box = dropdownUl.getBoundingClientRect();
+      var scrollLeft = window.pageXOffset || document.documentElement.scrollLeft || document.body.scrollLeft;
+      var clientLeft = document.documentElement.clientLeft || document.body.clientLeft || 0;
+      var left = Math.round(box.left + scrollLeft - clientLeft);
+
+      if (left > (window.innerWidth / 2)) {
+        if (ddWidth > ddInputWidth) {
+          var marginLeft = ddInputWidth - ddWidth;
+          var marginLeftStyle = marginLeft + "px";
+          dropdownUl.style.marginLeft = marginLeftStyle;
+        }
+      }
+    }, 0);
+
     this.optionsOpened = true;
   }
 
