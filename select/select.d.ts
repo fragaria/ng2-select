@@ -1,3 +1,4 @@
+/// <reference types="core-js" />
 import { EventEmitter, ElementRef, OnInit } from '@angular/core';
 import { ControlValueAccessor } from '@angular/forms';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
@@ -54,6 +55,7 @@ export declare class SelectComponent implements OnInit, ControlValueAccessor {
     private hideOptions();
     private selectActiveMatch();
     private selectMatch(value, e?);
+    onClick($event: MouseEvent): void;
 }
 export declare class Behavior {
     optionsMap: Map<string, number>;
