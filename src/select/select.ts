@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, ElementRef, OnInit, forwardRef } from '@angular/core';
+import { Component, Input, Output, EventEmitter, ElementRef, OnInit, forwardRef, HostListener } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { SelectItem } from './select-item';
@@ -15,24 +15,24 @@ let styles = `
   .ui-select-placeholder {
     float: left;
   }
-
+  
   /* Fix Bootstrap dropdown position when inside a input-group */
   .input-group > .dropdown {
     /* Instead of relative */
     position: static;
   }
-
+  
   .ui-select-match > .btn {
     /* Instead of center because of .btn */
     text-align: left !important;
   }
-
+  
   .ui-select-match > .caret {
     position: absolute;
     top: 45%;
     right: 15px;
   }
-
+  
   .ui-disabled {
     background-color: #eceeef;
     border-radius: 4px;
@@ -45,7 +45,7 @@ let styles = `
     left: 0;
     cursor: not-allowed;
   }
-
+  
   .ui-select-choices {
     width: 100%;
     height: auto;
@@ -53,7 +53,7 @@ let styles = `
     overflow-x: hidden;
     margin-top: 0;
   }
-
+  
   .ui-select-multiple .ui-select-choices {
     margin-top: 1px;
   }
@@ -72,12 +72,12 @@ let styles = `
       outline: 0;
       background-color: #428bca;
   }
-
+  
   .ui-select-multiple {
     height: auto;
     padding:3px 3px 0 3px;
   }
-
+  
   .ui-select-multiple input.ui-select-search {
     background-color: transparent !important; /* To prevent double background when disabled */
     border: none;
@@ -86,13 +86,13 @@ let styles = `
     height: 1.6666em;
     padding: 0;
     margin-bottom: 3px;
-
+    
   }
   .ui-select-match .close {
       font-size: 1.6em;
       line-height: 0.75;
   }
-
+  
   .ui-select-multiple .ui-select-match-item {
     outline: 0;
     margin: 0 3px 3px 0;
@@ -122,11 +122,10 @@ let styles = `
   <div tabindex="0"
      *ngIf="multiple === false"
      (keyup)="mainClick($event)"
-     [offClick]="clickedOutside"
      class="ui-select-container dropdown open">
     <div [ngClass]="{'ui-disabled': disabled}"></div>
     <div class="ui-select-match"
-         *ngIf="!inputMode">
+          [hidden]="inputMode">
       <span tabindex="-1"
           class="btn btn-default btn-secondary form-control ui-select-toggle"
           (click)="matchClick($event)"
@@ -163,13 +162,13 @@ let styles = `
           </div>
         </li>
       </ul>
-
+  
       <ul *ngIf="optionsOpened && options && options.length > 0 && firstItemHasChildren"
           class="ui-select-choices dropdown-menu" role="menu">
         <li *ngFor="let c of options; let index=index" role="menuitem">
           <div class="divider dropdown-divider" *ngIf="index > 0"></div>
           <div class="dropdown-header">{{c.text}}</div>
-
+  
           <div *ngFor="let o of c.children"
                class="ui-select-choices-row"
                [class.active]="isActive(o)"
@@ -188,7 +187,6 @@ let styles = `
      *ngIf="multiple === true"
      (keyup)="mainClick($event)"
      (focus)="focusToInput('')"
-     [offClick]="clickedOutside"
      class="ui-select-container ui-select-multiple dropdown form-control open">
     <div [ngClass]="{'ui-disabled': disabled}"></div>
     <span class="ui-select-match">
@@ -230,13 +228,13 @@ let styles = `
           </div>
         </li>
       </ul>
-
+  
       <ul *ngIf="optionsOpened && options && options.length > 0 && firstItemHasChildren"
           class="ui-select-choices dropdown-menu" role="menu">
         <li *ngFor="let c of options; let index=index" role="menuitem">
           <div class="divider dropdown-divider" *ngIf="index > 0"></div>
           <div class="dropdown-header">{{c.text}}</div>
-
+  
           <div *ngFor="let o of c.children"
                class="ui-select-choices-row"
                [class.active]="isActive(o)"
@@ -547,26 +545,27 @@ export class SelectComponent implements OnInit, ControlValueAccessor {
     if (this.options.length > 0) {
       this.behavior.first();
     }
-
+  
     /* Dropdown auto margin due to Viewport*/
-    setTimeout(function () {
-      var dropdownUl = this.element.nativeElement.querySelector('.ui-select-choices');
-      var ddInputWidth = this.element.nativeElement.querySelector('.ui-select-search').offsetWidth;
-      var ddWidth = dropdownUl.offsetWidth;
-      var box = dropdownUl.getBoundingClientRect();
-      var scrollLeft = window.pageXOffset || document.documentElement.scrollLeft || document.body.scrollLeft;
-      var clientLeft = document.documentElement.clientLeft || document.body.clientLeft || 0;
-      var left = Math.round(box.left + scrollLeft - clientLeft);
+      setTimeout(() => {
+        var dropdownUl = this.element.nativeElement.querySelector('.ui-select-choices');
+        var ddInputWidth = this.element.nativeElement.querySelector('.ui-select-search').offsetWidth;
+        var ddWidth = dropdownUl.offsetWidth;
+        var box = dropdownUl.getBoundingClientRect();
+        var scrollLeft = window.pageXOffset || document.documentElement.scrollLeft || document.body.scrollLeft;
+        var clientLeft = document.documentElement.clientLeft || document.body.clientLeft || 0;
+        var left = Math.round(box.left + scrollLeft - clientLeft);
 
-      if (left > (window.innerWidth / 2)) {
-        if (ddWidth > ddInputWidth) {
-          var marginLeft = ddInputWidth - ddWidth;
-          var marginLeftStyle = marginLeft + "px";
-          dropdownUl.style.marginLeft = marginLeftStyle;
+        if (left > (window.innerWidth / 2)) {
+          if (ddWidth > ddInputWidth) {
+            var marginLeft = ddInputWidth - ddWidth;
+            var marginLeftStyle = marginLeft + "px";
+            dropdownUl.style.marginLeft = marginLeftStyle;
+          }
         }
-      }
-    }, 0);
-    
+      }, 0);
+
+
     this.optionsOpened = true;
   }
 
@@ -604,6 +603,16 @@ export class SelectComponent implements OnInit, ControlValueAccessor {
       this.element.nativeElement.querySelector('.ui-select-container').focus();
     }
   }
+
+
+  @HostListener('document:click', ['$event']) public onClick($event: MouseEvent): void {
+      if(!this.element.nativeElement.contains($event.target)) {
+        this.clickedOutside();
+      }
+  }
+
+
+
 }
 
 export class Behavior {
@@ -780,4 +789,8 @@ export class ChildrenBehavior extends Behavior implements OptionsBehavior {
       super.ensureHighlightVisible(optionsMap);
     }
   }
+
+
+
+
 }
