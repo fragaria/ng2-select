@@ -313,7 +313,6 @@ var SelectComponent = (function () {
             _this.multiple === true && !_this.active.find(function (o) { return option.text === o.text; })); });
         if (this.options.length > 0) {
             this.behavior.first();
-        }
         /* Dropdown auto margin due to Viewport*/
         setTimeout(function () {
             var dropdownUl = _this.element.nativeElement.querySelector('.ui-select-choices');
@@ -331,6 +330,7 @@ var SelectComponent = (function () {
                 }
             }
         }, 0);
+        }
         this.optionsOpened = true;
     };
     SelectComponent.prototype.hideOptions = function () {
