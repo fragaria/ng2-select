@@ -544,8 +544,7 @@ export class SelectComponent implements OnInit, ControlValueAccessor {
 
     if (this.options.length > 0) {
       this.behavior.first();
-    }
-  
+
     /* Dropdown auto margin due to Viewport*/
       setTimeout(() => {
         var dropdownUl = this.element.nativeElement.querySelector('.ui-select-choices');
@@ -565,6 +564,7 @@ export class SelectComponent implements OnInit, ControlValueAccessor {
         }
       }, 0);
 
+    }
 
     this.optionsOpened = true;
   }
