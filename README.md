@@ -29,8 +29,11 @@
   - `allowClear` (`?boolean=false`) (*not yet supported*) - Set to `true` to allow the selection to be cleared. This option only applies to single-value inputs.
   - `placeholder` (`?string=''`) - Placeholder text to display when the element has no focus and selected items.
   - `disabled` (`?boolean=false`) - When `true`, it specifies that the component should be disabled.
-  - `multiple` - (`?boolean=false`) - Mode of this component. If set `true` user can select more than one option.
+  - `multiple` (`?boolean=false`) - Mode of this component. If set `true` user can select more than one option.
   This option only applies to single-value inputs, as multiple-value inputs don't have the search input in the dropdown to begin with.
+  - `idField` (`?string='id'`) - Name of the attribute to be used as id.
+  - `textField` (`?string='text'`) - Name of the attribute to be used as label.
+  - `childrenField` (`?string='children'`) - Name of the attribute to be used for hierarchy.
 
 ### Events
 
@@ -38,6 +41,7 @@
   - `selected` - it fires after a new option selected; returns object with `id` and `text` properties that describes a new option.
   - `removed` - it fires after an option removed; returns object with `id` and `text` properties that describes a removed option.
   - `typed` - it fires after changing of search input; returns `string` with that value.
+  - `opened` - it fires when options are opened/closed; returns `boolean` specifying openness.
 
 # Troubleshooting
 
